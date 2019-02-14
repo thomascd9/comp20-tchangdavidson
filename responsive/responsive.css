@@ -1,0 +1,48 @@
+@media (min-width: 1601px) {
+        .homer { /* TOP LEFT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -12px -12px;
+        }
+}
+
+@media (min-width: 1401px) and (max-width: 1600px) {
+        .homer { /* TOP RIGHT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -318px -12px;
+        }
+}
+
+@media (min-width: 1201px) and (max-width: 1400px) {
+        .homer { /* BOTTOM LEFT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -12px -318px;
+        }
+}
+
+@media (min-width: 1001px) and (max-width: 1200px) {
+        .homer { /* BOTTOM RIGHT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -318px -318px;
+        }
+}
+
+@media (min-width: 801px) and (max-width: 1000px) {
+        .homer { /* BOTTOM LEFT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -12px -318px;
+        }
+}
+
+@media (min-width: 601px) and (max-width: 800px) {
+        .homer { /* TOP RIGHT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -318px -12px;
+        }
+}
+
+@media (max-width: 600px) {
+        .homer { /* TOP LEFT */
+                width:295px; height:295px;
+                background: url(homer.jpg) -12px -12px;
+        }
+}
