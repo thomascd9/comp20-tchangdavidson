@@ -19,3 +19,7 @@ h3 {
     color: Magenta;
     text-transform: uppercase;
 }
+
+video {
+    width: 75%;
+}
