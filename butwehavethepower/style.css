@@ -1,0 +1,21 @@
+body {
+    font-family: "Courier";
+    background-color: AliceBlue;
+    color: FireBrick;
+    font-size: 18px;
+    text-align: center;
+}
+
+#title {
+    font-weight: bold;
+}
+
+p {
+    color: LightSeaGreen;
+}
+
+h3 {
+    font-family: Impact;
+    color: Magenta;
+    text-transform: uppercase;
+}
