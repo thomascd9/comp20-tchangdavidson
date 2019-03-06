@@ -10,24 +10,37 @@
 
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk&libraries=geometry"></script>
         <script>
+            /* VARIABLES */
             var lat = 0;
             var lng = 0;
             var map;
             var myloc;
-            var vp;
+            var vp; /* v for we have a list of vehicles, p for we have a list of passengers */
 
             var myOptions = {
                 zoom: 13, // The larger the zoom number, the bigger the zoom
                 center: myloc,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
-            var map;
 
-            var carpassList;
-            var rightList;
-            var infowindow;
+            var carpassList; /* everything API sent back */
+            var rightList; /* Either Passengers or Vehicles (the right one) */
+            var infowindow; /* InfoWindow for everyone */
+
+            /* OVERALL STRUCTURE
+             *
+             * getCurrentPosition -> makemap -> populatemap
+             *  -> put me on map, then get data with API -> putcarrpassonmap
+             *  -> putonmap for all entries of list
+             *
+             * Each component depends on the previous finishing so they're all
+             *      strung along together.
+             */
 
 
+            /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+            /* CONTROL FLOW OF PROGRAM STARTS HERE */
+            /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
             if ("geolocation" in navigator) {
                 /* geolocation is available */
                 navigator.geolocation.getCurrentPosition(function(x) {
@@ -56,6 +69,9 @@
                 populatemap();
             }
 
+            /* Puts a location on the map
+             * name tells function what it is to set set icon
+             * username is needed for the InfoWindow */
             function putonmap(location, name, username) {
                 // Create a marker
                 var marker = new google.maps.Marker({
@@ -91,6 +107,8 @@
                 });
             }
 
+            /* Me message-- the message to display in the InfoWindow when username
+             * clicks on own location marker */
             function memessage() {
                 var retstr = "<p>username: jDRTQGM9 <br />" + "Distance to nearest " + (vp == "v" ? "vehicle: " : "passenger: ");
                 /* Clicking on marker will display
@@ -113,6 +131,7 @@
                 return retstr;
             }
 
+            /* Minimum distance to a passenger or car */
             function mindistpasscar() {
                 mindist = 40.076 * 1000000; // circumfrance of earth
                 for (i = 0; i < rightList.length; i++) {
@@ -124,6 +143,7 @@
                 return mindist / 1609.34;
             }
 
+            /* Calculates the distance to a weinermobile */
             function weinerdist() {
                 var wd = -1;
                 for (i = 0; i < rightList.length; i++) {
@@ -135,7 +155,7 @@
                 return wd;
             }
 
-
+            /* Gets data to populate the map, then puts everything on the map */
             function populatemap() {
                 // Put me self on the map
                 putonmap(myloc, "me", "jDRTQGM9");
@@ -169,6 +189,7 @@
 
             }
 
+            /* Puts all the passengers or cars onto the map */
             function putcarrpassonmap() {
                 for (i = 0; i < rightList.length; i++) {
                     //put it on the map
