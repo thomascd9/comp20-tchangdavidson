@@ -1,29 +1,81 @@
 <!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Union Strike Folk Song</title>
-        <link rel="stylesheet" href="style.css" type="text/css" />
-    </head>
+        <title>Private Car Service</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-    <body>
+        <link rel="stylesheet" href="style.css"/>
 
-        <h1 id="title">Union Strike Folk Song</h1>
-        <div id="map">Loading</div>
-
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk"></script>
         <script>
-            var lat, lng;
+            var lat = 0;
+            var lng = 0;
+            var map;
+            var myloc;
+
+            var myOptions = {
+                zoom: 13, // The larger the zoom number, the bigger the zoom
+                center: myloc,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+
 
             if ("geolocation" in navigator) {
                 /* geolocation is available */
                 navigator.geolocation.getCurrentPosition(function(x) {
                     lat = x.coords.latitude;
                     lng = x.coords.longitude;
-                    
+                    // document.getElementById("map").innerHTML = "<p>" + lat + ", " + lng + "</p>";
+                    console.log(lat);
+                    console.log(lng);
+                    makemap();
                 });
             } else {
                 document.getElementById("map").innerHTML = "<p> Geolocation not supported</p>";
             }
+
+            /* Puts the map on to the document */
+            function makemap() {
+                console.log("We're in!");
+                /* Substantially borrowed from gmap_api_example.html */
+                myloc = new google.maps.LatLng(lat, lng);
+
+    			// Create the map in the "map" <div>
+    			var map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+                map.panTo(myloc);
+
+                populatemap();
+                console.log("All done????");
+            }
+            function populatemap() {
+                // Put me self on the map
+
+                // Create a marker
+                var marker = new google.maps.Marker({
+                    position: myloc,
+                    title: "Current Location"
+                });
+                marker.setMap(map);
+                // This is a global info window...
+                var infowindow = new google.maps.InfoWindow();
+
+                // Open info window on click of marker
+                google.maps.event.addListener(marker, 'click', function() {
+                    infowindow.setContent(marker.title);
+                    infowindow.open(map, marker);
+                });
+
+                // Get the passengers/ cars locations
+            }
         </script>
-    </body>
+
+    </head>
+
+    <body>
+		<div id="map"></div>
+	</body>
 </html>
