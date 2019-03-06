@@ -9,7 +9,7 @@ Passengers and cars should display correctly but I was only able to test with
 weinermobiles as that's all the API gave me when I tested.
 
 (in Chrome)
-Map does not display. Unknown why.
+Slower to load but seems to work.
 
 (in Safari)
 Access to geolocation was blocked over insecure connection to
