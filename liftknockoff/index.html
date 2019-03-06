@@ -14,13 +14,16 @@
             var lng = 0;
             var map;
             var myloc;
+            var vp;
 
             var myOptions = {
                 zoom: 13, // The larger the zoom number, the bigger the zoom
                 center: myloc,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
+            var map;
 
+            var carpassList;
 
 
             if ("geolocation" in navigator) {
@@ -29,8 +32,6 @@
                     lat = x.coords.latitude;
                     lng = x.coords.longitude;
                     // document.getElementById("map").innerHTML = "<p>" + lat + ", " + lng + "</p>";
-                    console.log(lat);
-                    console.log(lng);
                     makemap();
                 });
             } else {
@@ -39,43 +40,101 @@
 
             /* Puts the map on to the document */
             function makemap() {
-                console.log("We're in!");
                 /* Substantially borrowed from gmap_api_example.html */
                 myloc = new google.maps.LatLng(lat, lng);
 
     			// Create the map in the "map" <div>
-    			var map = new google.maps.Map(document.getElementById("map"), myOptions);
+    			map = new google.maps.Map(document.getElementById("map"), myOptions);
 
                 map.panTo(myloc);
 
                 populatemap();
                 console.log("All done????");
             }
-            function populatemap() {
-                // Put me self on the map
 
+            function putonmap(location, name) {
                 // Create a marker
                 var marker = new google.maps.Marker({
-                    position: myloc,
+                    position: location,
                     title: "Current Location"
                 });
+                if (name == "me") {
+                    marker.setIcon("me.png");
+                } else if (name == "WEINERMOBILE") {
+                    marker.setIcon("weinermobile.png");
+                } else if (name == "v") {
+                    marker.setIcon("car.png");
+                } else if (name == "p") {
+                    marker.setIcon("passenger.png");
+                }
                 marker.setMap(map);
-                // This is a global info window...
-                var infowindow = new google.maps.InfoWindow();
 
-                // Open info window on click of marker
-                google.maps.event.addListener(marker, 'click', function() {
-                    infowindow.setContent(marker.title);
-                    infowindow.open(map, marker);
-                });
+                if (location == myloc){ // This is a global info window...
+                    var infowindow = new google.maps.InfoWindow();
+
+                    // Open info window on click of marker
+                    google.maps.event.addListener(marker, 'click', function() {
+                        var a = disttoweiner();
+                        var b = disttocarpass()
+                        infowindow.setContent(a + b);
+                        infowindow.open(map, this);
+                    });
+                }
+            }
+            
+            function disttoweiner() {
+                return "Dist to weinermobile: \n";
+            }
+
+            function disttocarpass() {
+                return "Dist to nearest client: ";
+            }
+
+            function populatemap() {
+                // Put me self on the map
+                putonmap(myloc, "me");
 
                 // Get the passengers/ cars locations
+                var request = new XMLHttpRequest();
+                request.open("POST", "https://hans-moleman.herokuapp.com/rides");
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                request.onreadystatechange = function() {
+                    if (request.readyState == 4 && request.status == 200) {
+                        data = request.responseText;
+                        carpassList = JSON.parse(data);
+                        if (typeof carpassList.vehicles !== 'undefined') {
+                            vp = "v";
+                            putcarrpassonmap(carpassList.vehicles);
+                        } else {
+                            vp = "p";
+                            putcarrpassonmap(carpassList.passengers);
+                        }
+                    } else if (request.readyState == 4 && request.status != 200) {
+                        // think 404 or 500
+
+                    } else {
+                    }
+                };
+                // Step 3: trigger the HTTP request
+                // The argument for send() --data that you want to send to web server
+                request.send("username=jDRTQGM9&lat=" + lat + "&lng=" + lng);
+
+            }
+
+            function putcarrpassonmap(lista) {
+                console.log(lista);
+                for (i = 0; i < lista.length; i++) {
+                    //put it on the map
+                    putonmap(new google.maps.LatLng(lista[i].lat, lista[i].lng), lista[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp);
+                }
             }
         </script>
 
     </head>
 
     <body>
+        <h1> Private Car Service </h1>
 		<div id="map"></div>
 	</body>
 </html>
