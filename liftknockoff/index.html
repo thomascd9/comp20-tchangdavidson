@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Union Strike Folk Song</title>
+        <link rel="stylesheet" href="style.css" type="text/css" />
+    </head>
+
+    <body>
+
+        <h1 id="title">Union Strike Folk Song</h1>
+        <div id="map">Loading</div>
+
+        <script>
+            var lat, lng;
+
+            if ("geolocation" in navigator) {
+                /* geolocation is available */
+                navigator.geolocation.getCurrentPosition(function(x) {
+                    lat = x.coords.latitude;
+                    lng = x.coords.longitude;
+                    
+                });
+            } else {
+                document.getElementById("map").innerHTML = "<p> Geolocation not supported</p>";
+            }
+        </script>
+    </body>
+</html>
