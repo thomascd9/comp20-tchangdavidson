@@ -8,7 +8,7 @@
 
         <link rel="stylesheet" href="style.css"/>
 
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk&libraries=geometry"></script>
         <script>
             var lat = 0;
             var lng = 0;
@@ -24,6 +24,7 @@
             var map;
 
             var carpassList;
+            var rightList;
 
 
             if ("geolocation" in navigator) {
@@ -74,21 +75,57 @@
 
                     // Open info window on click of marker
                     google.maps.event.addListener(marker, 'click', function() {
-                        var a = disttoweiner();
-                        var b = disttocarpass()
-                        infowindow.setContent(a + b);
+                        infowindow.setContent(memessage());
                         infowindow.open(map, this);
                     });
+                } else {
+                    var infowindow = new google.maps.InfoWindow();
+
+                    // Open info window on click of marker
+                    google.maps.event.addListener(marker, 'click', function() {
+
+                        infowindow.setContent(memessage());
+                        infowindow.open(map, this);
+                    });
+
                 }
             }
-            
-            function disttoweiner() {
-                return "Dist to weinermobile: \n";
+
+            function memessage() {
+                var retstr = "<p>username: jDRTQGM9 <br />" + "Distance to nearest " + (vp == "v" ? "vehicle: " : "passenger: ");
+                /* Clicking on marker will display
+                (1) your username and distance away (in miles) to nearest vehicle or passenger, and
+                (2) distance away (in miles) to the Weinermobile --if it exists. */
+                var d = mindistpasscar();
+                retstr += d;
+                retstr += " miles<br />";
+
+                d = weinerdist();
+                if (d == -1) {
+                    retstr += "The Weinermobile is nowhere to be seen";
+                } else {
+                    retstr += "The Weinermobile is ";
+                    retstr += d;
+                    retstr += " miles away from me!";
+                }
+
+                retstr += "</p>";
+                return retstr;
             }
 
-            function disttocarpass() {
-                return "Dist to nearest client: ";
+            function mindistpasscar() {
+                mindist = 40.076 * 1000000; // circumfrance of earth
+                for (i = 0; i < rightList.length; i++) {
+                    var temp = google.maps.geometry.spherical.computeDistanceBetween(myloc, new google.maps.LatLng(rightList[i].lat, rightList[i].lng));
+                    if (temp < mindist) {
+                        mindist = temp;
+                    }
+                }
+                return mindist / 1609.34;
             }
+
+
+
 
             function populatemap() {
                 // Put me self on the map
@@ -105,11 +142,12 @@
                         carpassList = JSON.parse(data);
                         if (typeof carpassList.vehicles !== 'undefined') {
                             vp = "v";
-                            putcarrpassonmap(carpassList.vehicles);
+                            rightList = carpassList.vehicles;
                         } else {
                             vp = "p";
-                            putcarrpassonmap(carpassList.passengers);
+                            rightList = carpassList.passengers;
                         }
+                        putcarrpassonmap();
                     } else if (request.readyState == 4 && request.status != 200) {
                         // think 404 or 500
 
@@ -122,11 +160,11 @@
 
             }
 
-            function putcarrpassonmap(lista) {
-                console.log(lista);
-                for (i = 0; i < lista.length; i++) {
+            function putcarrpassonmap() {
+                console.log(rightList);
+                for (i = 0; i < rightList.length; i++) {
                     //put it on the map
-                    putonmap(new google.maps.LatLng(lista[i].lat, lista[i].lng), lista[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp);
+                    putonmap(new google.maps.LatLng(rightList[i].lat, rightList[i].lng), rightList[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp);
                 }
             }
         </script>
