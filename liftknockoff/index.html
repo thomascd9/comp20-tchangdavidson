@@ -54,7 +54,6 @@
                 infowindow = new google.maps.InfoWindow();
 
                 populatemap();
-                console.log("All done????");
             }
 
             function putonmap(location, name, username) {
@@ -171,7 +170,6 @@
             }
 
             function putcarrpassonmap() {
-                console.log(rightList);
                 for (i = 0; i < rightList.length; i++) {
                     //put it on the map
                     putonmap(new google.maps.LatLng(rightList[i].lat, rightList[i].lng), rightList[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp, rightList[i].username);
