@@ -25,6 +25,7 @@
 
             var carpassList;
             var rightList;
+            var infowindow;
 
 
             if ("geolocation" in navigator) {
@@ -49,15 +50,18 @@
 
                 map.panTo(myloc);
 
+                // This is a global info window...
+                infowindow = new google.maps.InfoWindow();
+
                 populatemap();
                 console.log("All done????");
             }
 
-            function putonmap(location, name) {
+            function putonmap(location, name, username) {
                 // Create a marker
                 var marker = new google.maps.Marker({
                     position: location,
-                    title: "Current Location"
+                    title: username
                 });
                 if (name == "me") {
                     marker.setIcon("me.png");
@@ -70,25 +74,22 @@
                 }
                 marker.setMap(map);
 
-                if (location == myloc){ // This is a global info window...
-                    var infowindow = new google.maps.InfoWindow();
 
-                    // Open info window on click of marker
-                    google.maps.event.addListener(marker, 'click', function() {
+                // Open info window on click of marker
+                google.maps.event.addListener(marker, 'click', function() {
+                    if (this.position == myloc) {
                         infowindow.setContent(memessage());
-                        infowindow.open(map, this);
-                    });
-                } else {
-                    var infowindow = new google.maps.InfoWindow();
-
-                    // Open info window on click of marker
-                    google.maps.event.addListener(marker, 'click', function() {
-
-                        infowindow.setContent(memessage());
-                        infowindow.open(map, this);
-                    });
-
-                }
+                    } else {
+                        var contstr = "<p>username: ";
+                        contstr += this.title;
+                        contstr += "<br />";
+                        contstr += "Distance to you: ";
+                        contstr += google.maps.geometry.spherical.computeDistanceBetween(myloc, this.position) / 1609.34;
+                        contstr += " miles</p>";
+                        infowindow.setContent(contstr);
+                    }
+                    infowindow.open(map, this);
+                });
             }
 
             function memessage() {
@@ -138,7 +139,7 @@
 
             function populatemap() {
                 // Put me self on the map
-                putonmap(myloc, "me");
+                putonmap(myloc, "me", "jDRTQGM9");
 
                 // Get the passengers/ cars locations
                 var request = new XMLHttpRequest();
@@ -173,7 +174,7 @@
                 console.log(rightList);
                 for (i = 0; i < rightList.length; i++) {
                     //put it on the map
-                    putonmap(new google.maps.LatLng(rightList[i].lat, rightList[i].lng), rightList[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp);
+                    putonmap(new google.maps.LatLng(rightList[i].lat, rightList[i].lng), rightList[i].username == "WEINERMOBILE" ? "WEINERMOBILE" : vp, rightList[i].username);
                 }
             }
         </script>
