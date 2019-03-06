@@ -104,7 +104,7 @@
                 if (d == -1) {
                     retstr += "The Weinermobile is nowhere to be seen";
                 } else {
-                    retstr += "The Weinermobile is ";
+                    retstr += "A Weinermobile is ";
                     retstr += d;
                     retstr += " miles away from me!";
                 }
@@ -124,7 +124,16 @@
                 return mindist / 1609.34;
             }
 
-
+            function weinerdist() {
+                var wd = -1;
+                for (i = 0; i < rightList.length; i++) {
+                    if (rightList[i].username == "WEINERMOBILE") {
+                        wd = google.maps.geometry.spherical.computeDistanceBetween(myloc, new google.maps.LatLng(rightList[i].lat, rightList[i].lng));
+                        wd /= 1609.34;
+                    }
+                }
+                return wd;
+            }
 
 
             function populatemap() {
