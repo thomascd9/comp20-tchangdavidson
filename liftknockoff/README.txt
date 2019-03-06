@@ -1,8 +1,13 @@
-Hello Thomas,
+Thomas Chang-Davidson
+COMP 20
+Assignment 2: The Private Car Service
 
-Your username for Assignment 2 (https://tuftsdev.github.io/WebProgramming/assignments/a2.html) is: jDRTQGM9
+Working correctly:
+Everything to the best of my knowledge.
 
-Please note that your user name is cAsE sEnSiTiVe. Find out if you are a passenger or vehicle.  Have fun!
+Collaborated with:
+discussed the assignment with Philip
+got help from TA Manish Aryal
 
-Google Maps API key
-AIzaSyC9sQaGQMUn1TEZG3C11LjRlpQAppS4WGk
+Hours spent:
+6
