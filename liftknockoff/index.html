@@ -72,10 +72,10 @@
             /* Puts a location on the map
              * name tells function what it is to set set icon
              * username is needed for the InfoWindow */
-            function putonmap(location, name, username) {
+            function putonmap(locn, name, username) {
                 // Create a marker
                 var marker = new google.maps.Marker({
-                    position: location,
+                    position: locn,
                     title: username
                 });
                 if (name == "me") {
