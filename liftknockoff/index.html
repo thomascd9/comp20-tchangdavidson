@@ -162,7 +162,7 @@
 
                 // Get the passengers/ cars locations
                 var request = new XMLHttpRequest();
-                request.open("POST", "https://hans-moleman.herokuapp.com/rides");
+                request.open("POST", "https://sleepy-atoll-76670.herokuapp.com/rides");
                 request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
                 request.onreadystatechange = function() {
@@ -176,6 +176,7 @@
                             vp = "p";
                             rightList = carpassList.passengers;
                         }
+                        console.log(carpassList);
                         putcarrpassonmap();
                     } else if (request.readyState == 4 && request.status != 200) {
                         // think 404 or 500
