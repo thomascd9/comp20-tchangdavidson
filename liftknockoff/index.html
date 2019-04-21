@@ -168,6 +168,7 @@
                 request.onreadystatechange = function() {
                     if (request.readyState == 4 && request.status == 200) {
                         data = request.responseText;
+                        console.log(data);
                         carpassList = JSON.parse(data);
                         if (typeof carpassList.vehicles !== 'undefined') {
                             vp = "v";
@@ -186,7 +187,10 @@
                 };
                 // Step 3: trigger the HTTP request
                 // The argument for send() --data that you want to send to web server
-                request.send("username=jDRTQGM9&lat=" + lat + "&lng=" + lng);
+                // request.send("username=jDRTQGM9&lat=" + lat + "&lng=" + lng);
+
+                // request.send("username=bobo&lat=" + lat + "&lng=" + lng);
+                request.send("username=mXfkjrFw&lat=" + lat + "&lng=" + lng);
 
             }
 
