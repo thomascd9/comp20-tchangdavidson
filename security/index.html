@@ -1,0 +1,76 @@
+<!DOCTYPE html> <!--HTML document-->
+<html lang="en">
+    <head>
+        <title>Thomas Home</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <h1>Security and Privacy Assessment of Private Car Service</h1>
+        <h3> Thomas Chang-Davidson </h3>
+        <h2> Introduction </h2>
+            The goal of this assesment is to document and resolve security and privacy issues in Mikayla Toffler's lift knock off and lift knock off server. Below is a detailed report on the vulnerabilities found and recommendations for their resolution.
+        <h2> Methodology </h2>
+            The website and usage was examined. Then the service was tested for common web vulnerabilities (from OWASP Top 10). After that, the code was examined for consistency with the specification. The possibility of common vulnerabilities was considered in examining how the code was written. Finally, we considered what should be private and what the application dislays publicly. Inconsistencies were reported.
+        <h2> Abstract of Findings </h2>
+            While the application did not always work correctly (see proof below), the possibility of several vulnerabilities and security problems was found. Database Injection and the general structure of the project allowed for data exposure and malicious usage. Additionally, several good programming practices were not followed, allowing for the possibility of cross site scripting.
+            <p><img src="notWorking.png" alt="curl: project not working" /></p>
+
+
+        <h2> Issues </h2>
+
+        <h3> Database Injection </h3>
+            <p> When accessing /passenger.json, if the username is specified as username[$ne]=notaPassenger, the site will report all passengers and their locations. This is a privacy problem; As a passenger, I would not want all my whereabouts publically available. To me as a passenger, this is a high severity issue since; if the public found that their locations were just publically available, they would be furious.</p>
+            <p><img src="allPassLoc.png" alt="picture of database injection" /></p>
+            <p> Resolution: Add an extra check before sending the GET response to ensure that all the usernames match the provided one. </p>
+
+        <h3> Possibility of Cross Site Scripting </h3>
+            <p> The server side javascript does not use a validator. This is just bad practice. This is mostly a bad programming practice. I could not find a way to get scripts into the drivers database, but it was easy to get them into the passengers datbase. </p>
+            <p><img src="scriptInDatabase.png" alt="script in passenger database" /></p>
+            <p> I found one way to get attacked by this cross site script: using the aformentioned database injection. When you examine all passengers, the script runs. </p>
+            <p><img src="dbiXSS.png" alt="cross site script working" /></p>
+            <p> This issue is of medium severity. While I found few venues for the scirpt to work, it go into the database. </p>
+            <p> Resolution: Run the username through a validator before inserting into the database. </p>
+
+        <h3> Exposure of Driver Access Credentials </h3>
+            <p> On the home page, where all the drivers are listed, their usernames are listed out in the open. While this alone is not an issue, the username is the only item required to pretend to be that user. No password is used. This means that any malicious attacker could flood the service with fake locations, pretending to be any of the drivers who used the service. Since this makes the service very vulnerable to malicious persons, this is a high severity issue. Exploiting this issue would make the service unusable.</p>
+            <p><img src="driverUsernames.png" alt="driver usernames" /></p>
+            <p> Resolution: Either give each driver a unique identifier other than their username and display that on the home page or add a password to the POST route. Properly handling passwords is a class or project of its own, so use a credential API. </p>
+
+        <h3> Exposure of Google Maps API Key </h3>
+            <p> When accessing the client side of the liftknockoff service, the Google Maps API key is part of the HTML. This alone is not an issue. The problem is that no specific website is serving the client side. Therefore, it is not possible that the API key is restricted to a specific website. Anyone could take the API key and use it for their website or service, while Google would hold you responsible for their actions. In Google's words, <a href="https://developers.google.com/maps/api-key-best-practices">"Publicly exposing unsecured credentials can result in unintended use, which could lead to unexpected charges on your account."</a> This is a low severity issue; if found, an attacker would have to be malicious and want to cause Google to charge you or have a use for a Google Maps API key. A malicious attacker could just use your service a lot instead though and have the same effect as using you API key. </p>
+            <p><img src="mapsAPIkey.png" alt="Google Maps API Key" /></p>
+            <p> Resolution: Have an API key specific to this project, pick a site to host the client app on, and restrict the API key to that website. Then monitor your API key for unexpected usage. </p>
+
+        <h3> Usage of Secure Protocol 1: GET </h3>
+            <p> In general, it is best practice to use secure protocols for web applications. This application allows for the use of both http and https to access the site. It would be better to redirect all traffic to the https version of the site. This is a low priority issue since a man in the middle attack would be required to exploit this on the website. Https would encript all traffic. Below is a picture of accessing the site using http. Chrome identifies this as "Not Secure"</p>
+            <p><img src="http.png" alt="http accessing the site" /></p>
+            <p> Resolution: On the server side, redirect all http traffic to the https site. See references for stackoverflow directions on how to do that. </p>
+
+        <h3> Usage of Secure Protocol 2: POST </h3>
+            <p> In general, it is best practice to use secure protocols for web applications. This application uses POST for sending and retreiving secure data. Since username is the only credential for identifying the user, it should be treated as if it were a password. The POST protocol therefore is inappropriate for this situation. Instead, use SSL (https) to send user's location and get passenger or vehicle list. This is a low severity issue since it requires a man in the middle attack to exploit. </p>
+            <p><img src="post.png" alt="proof of use of POST protocol" /></p>
+            <p> Resolution: Send client username and location over SSL (https). </p>
+
+        <h2> Conclusion </h2>
+            <p> In future, privacy needs to be part of the planning of a web application from the start. The whole project should be structured with security and privacy in mind. Furthermore, best practices with respect to database usage and taking user input must also be followed. Database injection and Cross Site Scripting should not be issues-- the code should be written to deal with them from the start. This project seems to have several major flaws and needs a lot of work.
+        <h2> References </h2>
+        <p> <a href="https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf"> OWASP Top 10 </a> </p>
+        <p> Ming Chow's COMP 20 lectures (ALL), Spring 2019 </p>
+        <p><a href="https://developers.google.com/maps/api-key-best-practices"> Google API Key Best Practices </a> </p>
+        <p><a href="https://stackoverflow.com/questions/7450940/automatic-https-connection-redirect-with-node-js-express"> Node.js Redirect to https </a> </p>
+        <p><a href="https://developers.google.com/web/fundamentals/security/encrypt-in-transit/why-https"> Why HTTPS Matters </a> </p>
+        <p><a href="https://security.stackexchange.com/questions/33837/get-vs-post-which-is-more-secure"> Is POST Secure </a> </p>
+
+
+    </body>
+</html>
+
+<!-- 1. cross site scripting- attack drivers by adding a passenger whose
+    name is a script.
+2. Fake being a driver- usernames are listed on the site.
+3. Google maps API key exposure.
+4. [$ne]
+5. https usage always
+6.  -->
